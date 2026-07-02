@@ -1,0 +1,12 @@
+services:
+  ocr:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8501:8501"
+    volumes:
+      - ocr-models:/root/.paddlex
+
+volumes:
+  ocr-models:
