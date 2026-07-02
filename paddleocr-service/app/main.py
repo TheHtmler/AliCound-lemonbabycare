@@ -27,8 +27,6 @@ def load_model():
         use_doc_orientation_classify=False,
         use_doc_unwarping=False,
         use_textline_orientation=True,
-        # PaddlePaddle 3.3.1 + oneDNN 在 PP-OCRv5 上有已知崩溃（PaddleOCR#18119），关闭 mkldnn 规避。
-        enable_mkldnn=False,
         # server 检测/识别模型在这台 1.8GB 内存的服务器上会被 OOM Killer 杀掉，换成内存占用小得多的 mobile 模型。
         text_detection_model_name="PP-OCRv5_mobile_det",
         text_recognition_model_name="PP-OCRv5_mobile_rec",

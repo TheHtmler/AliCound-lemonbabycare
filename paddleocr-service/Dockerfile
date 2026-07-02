@@ -1,4 +1,4 @@
-FROM paddlepaddle/paddle:3.3.1
+FROM paddlepaddle/paddle:3.2.2
 
 WORKDIR /srv
 
