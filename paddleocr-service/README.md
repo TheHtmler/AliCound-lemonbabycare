@@ -2,6 +2,8 @@
 
 开源免费方案：PaddleOCR (PP-OCRv5) + FastAPI + Docker，CPU 推理，适合低并发场景。
 
+**模型选择说明**：检测/识别用的是 PP-OCRv5 的 **mobile** 系列模型（`PP-OCRv5_mobile_det` / `PP-OCRv5_mobile_rec`），不是精度更高的 server 系列。原因：server 系列检测模型处理稍大一点的图片时内存开销很大（几百万像素能吃到 1.5GB+），在这台 1.8GB 内存的轻量服务器上跑图会被系统 OOM Killer 杀掉。mobile 系列内存占用小一个量级，牺牲一点精度换稳定可用。如果以后服务器升级到内存更大的规格，可以把 `app/main.py` 里的 `text_detection_model_name`/`text_recognition_model_name` 两行删掉，恢复默认的 server 模型。
+
 ## 本地/服务器部署步骤（宝塔面板）
 
 1. **上传代码**：用宝塔「文件管理」把 `paddleocr-service` 整个目录上传到服务器（比如 `/www/wwwroot/paddleocr-service`），或者用 git clone。
