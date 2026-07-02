@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 API_KEY = os.environ["OCR_API_KEY"]
 LANG = os.environ.get("OCR_LANG", "ch")
+MAX_IMAGE_SIDE = int(os.environ.get("OCR_MAX_IMAGE_SIDE", "1600"))
 
 app = FastAPI(title="PaddleOCR Service")
 ocr_engine: Optional[PaddleOCR] = None
@@ -53,6 +54,14 @@ def run_ocr(image_bytes: bytes) -> OcrResponse:
     image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
     if image is None:
         raise HTTPException(status_code=400, detail="unreadable image")
+
+    # 手机拍照原图分辨率通常远超 OCR 识别所需，缩小到 MAX_IMAGE_SIDE 长边以内，
+    # 大幅降低这台低配服务器上的 CPU 推理耗时（避免小程序端超时）。
+    h, w = image.shape[:2]
+    longest_side = max(h, w)
+    if longest_side > MAX_IMAGE_SIDE:
+        scale = MAX_IMAGE_SIDE / longest_side
+        image = cv2.resize(image, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
 
     lines: List[OcrLine] = []
     for res in ocr_engine.predict(image):
